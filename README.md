@@ -7,7 +7,7 @@ An operational system for coordinating research programmes, people, events, task
 **[Live interactive demo →](https://team-operational-architecture-8dtngann9npecppulknp8r.streamlit.app/)**
 ---
 
-#What it does
+# What it does
 
 Tracks events across 4 programme types (Intensive, Fellowship, Events, Residency)
 One checkbox syncs a row to internal + public Google Calendars
@@ -15,14 +15,6 @@ Cancelling a row removes it from every calendar automatically
 Automated reminders: missing attendance, contracts expiring in 60/40 days
 Auto-built monthly revenue table feeds the dashboard above
 
-Repo
-
-```
-app.py         Streamlit dashboard demo
-scripts/       Apps Script automations
-data/          CSVs
-docs/          SOP template + screenshot
-```
 ---
 
 # Design principles
