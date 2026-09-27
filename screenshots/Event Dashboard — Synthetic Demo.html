@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Event Tracker — Synthetic Demo</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --border: #e1e4e8;
+    --text: #1f2328;
+    --muted: #6b7280;
+    --accent: #2f7d5f;
+    --accent2: #3b6fd6;
+    --pill-ll: #c9e4ca;
+    --pill-community: #cfe0ff;
+    --pill-workshop: #1f3a5f;
+    --pill-workshop-text: #ffffff;
+    --pill-other: #b9b9b9;
+    --toolbar: #0f6d3c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161a;
+      --panel: #1d2025;
+      --border: #2e3238;
+      --text: #e7e9ec;
+      --muted: #9aa1a9;
+      --pill-ll: #234a2c;
+      --pill-community: #1e3a63;
+      --pill-workshop: #3b5a86;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a;
+    --panel: #1d2025;
+    --border: #2e3238;
+    --text: #e7e9ec;
+    --muted: #9aa1a9;
+    --pill-ll: #234a2c;
+    --pill-community: #1e3a63;
+    --pill-workshop: #3b5a86;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+  .disclaimer {
+    background: #fff7e0; color: #6b5200; border: 1px solid #e8d68a;
+    border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 18px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .disclaimer { background: #3a3316; color: #f0d878; border-color: #5c4f22; }
+  }
+  :root[data-theme="dark"] .disclaimer { background: #3a3316; color: #f0d878; border-color: #5c4f22; }
+
+  .sheet-toolbar {
+    background: var(--toolbar); color: #fff; border-radius: 8px 8px 0 0;
+    padding: 10px 14px; font-size: 13px; display: flex; align-items: center; gap: 10px;
+  }
+  .sheet-toolbar .title { font-weight: 600; font-size: 14px; }
+  .sheet-menu { display: flex; gap: 14px; font-size: 12px; opacity: 0.9; padding: 6px 14px; background: rgba(255,255,255,0.08); }
+
+  .table-card {
+    background: var(--panel); border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 8px 8px; overflow-x: auto; margin-bottom: 32px;
+  }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; min-width: 900px; }
+  th, td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; white-space: nowrap; }
+  th { background: var(--accent); color: #fff; position: sticky; top: 0; font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+  }
+  td.notes { white-space: normal; max-width: 260px; color: var(--muted); font-size: 12px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .pill-ll { background: var(--pill-ll); color: #14532d; }
+  .pill-community { background: var(--pill-community); color: #1e3a63; }
+  .pill-workshop { background: var(--pill-workshop); color: var(--pill-workshop-text); }
+  .pill-other { background: var(--pill-other); color: #333; }
+  .check { color: var(--accent); font-weight: 700; }
+
+  h2.section-title {
+    font-size: 18px; background: var(--accent2); color: #fff;
+    padding: 10px 16px; border-radius: 8px; margin: 0 0 16px;
+  }
+  .grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px 6px;
+  }
+  .card h3 { margin: 0 0 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
+  canvas { max-width: 100%; }
+  .big-number-card { grid-column: 1 / -1; }
+  .big-number { font-size: 34px; font-weight: 700; margin: 4px 0 10px; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="sheet-toolbar">
+    <span class="title">📊 Event Tracker MASTER</span>
+  </div>
+  <div class="sheet-menu"><span>File</span><span>Edit</span><span>View</span><span>Insert</span><span>Format</span><span>Data</span><span>Tools</span></div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th><th>Region</th><th>Contact</th><th>Event Name</th><th>Event Type</th>
+          <th>Funding Type</th><th># Att</th><th>Public?</th><th>Location</th><th>Presenter</th>
+          <th>Revenue</th><th>Status</th><th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">Self-Updating Analytics</h2>
+  <div class="grid">
+    <div class="card"><h3>Annual Attendee Count</h3><canvas id="chartAttendees" height="160"></canvas></div>
+    <div class="card"><h3>Annual Event Count</h3><canvas id="chartEvents" height="160"></canvas></div>
+    <div class="card"><h3>Events by Region (this year)</h3><canvas id="chartRegion" height="160"></canvas></div>
+    <div class="card"><h3>Monthly Event Trend (this year)</h3><canvas id="chartMonthly" height="160"></canvas></div>
+    <div class="card big-number-card">
+      <h3>Total Revenue (excl. donations)</h3>
+      <div class="big-number">¥19,430,000</div>
+      <canvas id="chartBudget" height="120"></canvas>
+    </div>
+  </div>
+
+  <footer>Synthetic reconstruction · Google Sheets + Apps Script + Chart rendering</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ---- synthetic table rows ----
+const rows = [
+  ["2026-08-01","Online","Jordan Reyes","Research Methods Info Session","Info Session","None",22,"Yes","Online","Methods Team","","Finished","Public info session for the Research Intensive cohort."],
+  ["2026-08-05","Kanto","Alex Kim","Fellowship Mentor Matching Workshop","Workshop","Grant",15,"Yes","Programme Office","Fellowship Team","","Finished","Matches incoming fellows with mentors."],
+  ["2026-08-12","Kansai","Sam Patel","Quarterly Partner Review","Client Meeting","Fee-for-service",6,"No","Regional Office","—","¥450,000","Finished","Internal only, contract renewal discussion."],
+  ["2026-08-20","Online","Jordan Reyes","Research Residency Kickoff","Residency","Sponsorship",30,"Yes","Online","Residency Team","","Finished","Public kickoff stream for residency cohort."],
+  ["2026-09-02","Kyushu","Alex Kim","Community Research Talk","Community Event","Fundraised",40,"Yes","Community Hall","Guest Speaker","","Finished","Well attended, repeat quarterly."],
+  ["2026-09-15","Okinawa","Jordan Reyes","Residency Open House","Residency","Grant",25,"Yes","Regional Office","Residency Team","","Finished","Public open house."],
+  ["2026-10-08","Kansai","Jordan Reyes","Community Fundraising Gala","Community Event","Fundraised",60,"Yes","Community Hall","Events Team","¥1,120,000","Finished","Large public fundraiser."]
+];
+const pillClass = t => t === "Info Session" || t === "Residency" ? "pill-ll"
+  : t === "Community Event" ? "pill-community"
+  : t === "Workshop" ? "pill-workshop"
+  : "pill-other";
+
+const tbody = document.getElementById('tbody');
+rows.forEach(r => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>
+    <td><span class="pill ${pillClass(r[4])}">${r[4]}</span></td>
+    <td>${r[5]}</td><td>${r[6]}</td>
+    <td>${r[7] === "Yes" ? '<span class="check">✔</span> Yes' : 'No'}</td>
+    <td>${r[8]}</td><td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td>
+    <td class="notes">${r[12]}</td>`;
+  tbody.appendChild(tr);
+});
+
+// ---- charts ----
+const years = ['2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+new Chart(document.getElementById('chartAttendees'), {
+  type: 'bar',
+  data: { labels: years, datasets: [{ data: [640,1120,3480,1860,1540,4720,6980,6340,5510,4880], backgroundColor: '#2f7d5f' }] },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+new Chart(document.getElementById('chartEvents'), {
+  type: 'line',
+  data: { labels: years, datasets: [{ data: [42,68,88,58,71,112,128,119,101,96], borderColor: '#3b6fd6', tension: 0.35, fill: false }] },
+  options: { plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('chartRegion'), {
+  type: 'pie',
+  data: { labels: ['Kanto','Kansai','Kyushu','Okinawa','Online'],
+    datasets: [{ data: [38,26,11,7,18], backgroundColor: ['#2f7d5f','#3b6fd6','#e0a944','#c86464','#8a8fa3'] }] },
+  options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }
+});
+new Chart(document.getElementById('chartMonthly'), {
+  type: 'line',
+  data: { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    datasets: [{ data: [6,8,9,7,10,12,8,11,9,13,10,7], borderColor: '#2f7d5f', tension: 0.3, fill: false }] },
+  options: { plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('chartBudget'), {
+  type: 'bar',
+  data: { labels: ['Sponsorships','Fundraised','Fee-for-service','Grants'],
+    datasets: [{ data: [6200000,5900000,2730000,4600000], backgroundColor: ['#3b6fd6','#c86464','#e0a944','#2f7d5f'] }] },
+  options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+});
+</script>
+</body>
+</html>
