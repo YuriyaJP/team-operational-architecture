@@ -2,7 +2,7 @@
 
 An operational system for coordinating research programmes, people, events, tasks, documentation, and recurring workflows.
 
-![Dashboard screenshot](docs/images/dashboard-screenshot.png)
+![Dashboard screenshot](screenshots/dashboard-screenshot.png)
 
 **[Live interactive demo →](https://team-operational-architecture-8dtngann9npecppulknp8r.streamlit.app/)**
 ---
